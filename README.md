@@ -2,13 +2,18 @@
 
 ---
 
-## author : 李向伟
+- 创建日期：2019年11月19日
 
-创建日期：2019年11月19日
-
-最后一次修改日期：
+- 最后一次修改日期：2019年12月11日
+- 作者联系方式：QQ-3409817946
 
 ---
+
+## 统一说明
+
+- 本sdk提供所有回调的所有方法不保证在主线程执行，如果需要在回调里进行界面相关操作，请自行切换回UI线程。
+- 如在调用本SDK的过程中发现问题，请在github上提交issue或者联系作者。
+- 名词解释： cloudapi => 云科智能锁开放平台提供的restful接口
 
 ## 准备工作（重要）
 
@@ -277,7 +282,7 @@ new ResetLockCallback(){
 JJLockClient.getDefault().openLock(lockMac, anyCode,openLockCallback);
 ```
 
-开锁只需要三个参数，第一个参数是锁的mac地址，由服务器提供。第二个参数叫anyCode，同样由服务器提供给你。
+开锁只需要三个参数，第一个参数是锁的mac地址，由cloudapi提供。第二个参数叫anyCode，同样由cloudapi提供给你。
 
 因此只有第三个参数需要您去实现。
 
@@ -285,7 +290,7 @@ JJLockClient.getDefault().openLock(lockMac, anyCode,openLockCallback);
 JJLockClient.getDefault().openLock(lockMac, anyCode, new OpenLockCallback() {
     @Override
     public void onOpenLockSuccess() {
-		//当开锁成功时回调。一般情况下您除了展示界面效果外，还需要根据cloudapi向服务器上传蓝牙开锁记录。
+		//当开锁成功时回调。一般情况下您除了展示界面效果外，还需要根据cloudapi向cloudapi上传蓝牙开锁记录。
     }
 
     @Override
@@ -322,7 +327,7 @@ JJLockClient.getDefault().syncLockTime(lockMac, new SyncTimeCallback() {
 
 ## 同步数据
 
-同步数据指同步锁的数据到服务器。注意，同步数据时锁需要在手机附近，代码如下：
+同步数据指同步锁的数据到cloudapi。注意，同步数据时锁需要在手机附近，代码如下：
 
 ```java
 JJLockClient.getDefault().syncLockData(lockMac, new SyncDataCallback() {
@@ -333,9 +338,9 @@ JJLockClient.getDefault().syncLockData(lockMac, new SyncDataCallback() {
 
     @Override
     public void onGetData(int recordCount, String data) {
-		//获取数据成功，这种情况SDK接入者应该调用cloudapi将锁的记录上传到服务器
+		//获取数据成功，这种情况SDK接入者应该调用cloudapi将锁的记录上传到cloudapi
         //recordCount为记录条数
-        //data为记录内容，可直接上传到服务器
+        //data为记录内容，可直接上传到cloudapi
     }
 
     @Override
@@ -360,8 +365,8 @@ JJLockClient.getDefault().addIC(lockMac, new AddICCallback() {
     public void onGetIcId(String idStr, AddICOp addICOp) {
 		//此方法在读取ic卡成功的时候调用
         //您正常情况下应该在此方法里调用cloudapi以换取添加ic流程后续需要的数据
-        //注意，此处提供了两个参数，第一个参数是ic卡的id字符串表现形式，用于您上传到服务器
-        //第二个参数addICOp用于您在拿到服务器的数据后在此实例上进行afterGetPwdFromServer(String)的调用以便完成添加ic卡的后续操作
+        //注意，此处提供了两个参数，第一个参数是ic卡的id字符串表现形式，用于您上传到cloudapi
+        //第二个参数addICOp用于您在拿到cloudapi的数据后在此实例上进行afterGetPwdFromServer(String)的调用以便完成添加ic卡的后续操作
     }
 
     @Override
@@ -406,7 +411,7 @@ JJLockClient.getDefault().alterIC(lockMac, idStr, password, new AlterICCallback(
 });
 ```
 
-另外需要说明的是，修改IC卡您需要传入4个参数。其中有三个参数都包含在服务器返回的IC卡列表信息里。lockMac是服务器返回的锁的lockMac地址，idStr代表IC卡id的字符串，您只需要原样填入；password也由服务器返回。AlterICCallback则需要您自己实现。
+另外需要说明的是，修改IC卡您需要传入4个参数。其中有三个参数都包含在cloudapi返回的IC卡列表信息里。lockMac是cloudapi返回的锁的lockMac地址，idStr代表IC卡id的字符串，您只需要原样填入；password也由cloudapi返回。AlterICCallback则需要您自己实现。
 
 ## 删除卡
 
@@ -414,7 +419,7 @@ JJLockClient.getDefault().alterIC(lockMac, idStr, password, new AlterICCallback(
 JJLockClient.getDefault().deleteIC(lockMac, idStr, new DeleteICCallback() {
     @Override
     public void deleteICOk() {
-        //当锁删除IC卡成功的时候调用，注意，您应该在此回调里调用apicloud的删除IC卡的接口 以删除服务器记录的IC卡
+        //当锁删除IC卡成功的时候调用，注意，您应该在此回调里调用apicloud的删除IC卡的接口 以删除cloudapi记录的IC卡
     }
 
     @Override
@@ -429,10 +434,96 @@ JJLockClient.getDefault().deleteIC(lockMac, idStr, new DeleteICCallback() {
 ## 固件升级
 
 ```java
-JJLockClient.getDefault().firmwareUpgrade(Context, "bab7c754-8954-4f62-ba85-88d64b52c3b8", "从服务器拿到的mac地址",firmwareUpgradeCallback ,otaCallback );
+JJLockClient.getDefault().firmwareUpgrade(Context, "bab7c754-8954-4f62-ba85-88d64b52c3b8", "从cloudapi拿到的mac地址",firmwareUpgradeCallback ,otaCallback );
 ```
 
+这里着重说一下第二个参数，第二个参数需要您传入cloudapi返回给您的access_token，您必须传入正确的access_token，否则固件升级无法正常工作。
 
+为了使调用更简单，SDK提供了两个回调接口，需要您在调用的时候传入。
+
+第一个需要您传入的回调是：
+
+```java
+FirmwareUpgradeCallback firmwareUpgradeCallback = new FirmwareUpgradeCallback() {
+    @Override
+    public void start() {
+       //固件升级流程开始
+    }
+
+    @Override
+    public void onRetrivedInfo(boolean upgradable, String version, final FirmwareUpgradeOp firmwareUpgradeOp) {
+       //upgradable表示是否有新的固件可升级，如果为true，代表应该升级，当然这并非强制的。
+        //version是最新固件的字符串表现形式
+        //第三个参数是SDK为您提供的实例，如果您决定升级固件，请调用以下代码
+        firmwareUpgradeOp.upgrade(); //进行固件升级,如果不想升级，不调用即可
+
+    }
+
+    @Override
+    public void onFail(int errorCode, String errMsg) {
+        //固件升级失败
+    }
+};
+```
+
+您需要传入的第二个回调如下，这个回调在固件升级已经开始的时候执行。
+
+```java
+OTACallback otaCallback = new OTACallback() {
+  
+    @Override
+    public void onProcess(float v) {
+        // v代表当前固件升级的进度,如70.1，代表当前固件升级进度70.1%
+    }
+
+    @Override
+    public void onUpdateComplete() {
+       //固件升级完成的时候执行
+    }
+};
+```
 
 ## 附录（errcode表）
+
+```java
+package com.yunkelock.yunsdk;
+
+/**
+ * 定义了所有在蓝牙操作时可能发生的错误
+ */
+public class JJErrorCode {
+    public static final int ERR_UNKONOW = -1 ; //未知错误
+
+    public static final int ERR_CONNECT_FAIL = -2 ; //连接失败
+    public static final int ERR_NOTIFY_FAIL = -3; //监听notify失败
+    public static final int ERR_WRITE_FAIL = -4; //向蓝牙设备写数据失败
+
+
+    public static final int INIT_LOCK_FAIL = -11; //初始化锁失败，这个时候不需要删除服务器的锁记录，因为还没上传
+
+    public static final int FINAL_INIT_LOCK_FAIL = -12;//最终初始化锁失败，这个时候sdk调用者需要调用cloudapi删除服务器的锁记录
+
+    public static final int ERR_RESETLOCK_FAIL = -21;//解绑(重置锁)失败
+
+
+    public static final int ERR_CANNOT_READCARD = -31;//锁不能进入读卡模式
+    public static final int ERR_IC_COUNT_IS_MAX = -32;//ic卡的数量已经达到上限
+    public static final int ERR_IC_ALREADY_EXIST = -33;//ic卡已经添加过
+    public static final int ERR_FINALLY_ADDIC_FAIL = -34;//最终添加ic卡失败
+
+
+    public static final int ERR_IC_NOT_EXIT = -41; //要修改的IC卡不存在
+
+
+    public static final int ERR_CANNOT_FIND_AIM = -51;//固件升级的时候不能发现目标设备
+
+
+    public static final int ERR_HTTP_EXCEPTION = -100;//http异常
+    public static final int ERR_PARAM_ERROR = -111; //传入参数异常
+
+    public static final int ERR_WRITEFILE_FAILED = -200;//操作外存储器失败
+
+    public static final int ERR_UPGRADING = -300; //固件升级的时候失败
+}
+```
 
