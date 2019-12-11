@@ -13,7 +13,28 @@
 
 - 本sdk提供所有回调的所有方法不保证在主线程执行，如果需要在回调里进行界面相关操作，请自行切换回UI线程。
 - 如在调用本SDK的过程中发现问题，请在github上提交issue或者联系作者。
-- 名词解释： cloudapi => 云科智能锁开放平台提供的restful接口
+- 名词解释： cloudapi => 家家智能锁开放平台提供的restful接口
+
+## 如何接入
+
+1. 在您的APP模块下的build.gradle文件里加入以下配置
+
+```gradle
+repositories {
+    flatDir {
+        dirs 'libs'   // aar目录
+    }
+}
+```
+
+2. 在您的APP模块下的build.gradle文件里加入以下依赖(这两个包在/res里提供)
+
+```gradle
+implementation(name: 'phy_ota_sdk-1.0.7', ext: 'aar')
+implementation(name: 'yunsdk-(版本号).release', ext: 'aar')
+```
+
+或者您也可以使用其它方式依赖aar
 
 ## 准备工作（重要）
 
@@ -515,7 +536,7 @@ public class JJErrorCode {
     public static final int ERR_IC_NOT_EXIT = -41; //要修改的IC卡不存在
 
 
-    public static final int ERR_CANNOT_FIND_AIM = -51;//固件升级的时候不能发现目标设备
+    public static final int ERR_CANNOT_FIND_AIM = -51;//不能发现目标设备
 
 
     public static final int ERR_HTTP_EXCEPTION = -100;//http异常
@@ -523,7 +544,7 @@ public class JJErrorCode {
 
     public static final int ERR_WRITEFILE_FAILED = -200;//操作外存储器失败
 
-    public static final int ERR_UPGRADING = -300; //固件升级的时候失败
+    public static final int ERR_UPGRADING = -300; //固件升级中途失败
 }
 ```
 
