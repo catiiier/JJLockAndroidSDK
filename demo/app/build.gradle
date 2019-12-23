@@ -34,6 +34,6 @@ dependencies {
 
     //sdk的依赖配置
     implementation(name: 'phy_ota_sdk-1.0.7', ext: 'aar')
-    implementation(name: 'yunsdk-1.0.0.release', ext: 'aar')
+    implementation(name: 'yunsdk-1.0.1.release', ext: 'aar')
 
 }
