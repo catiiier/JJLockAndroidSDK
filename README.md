@@ -552,4 +552,4 @@ public class JJErrorCode {
 
 ## sample(demo) app
 
-/demo是一个为了示例APP，方便您快速的了解该如何接入SDK。本demoAPP提供的功能有绑定，开锁，解锁等。
+/demo是一个示例APP，为了方便您快速的了解该如何接入SDK。本demoAPP提供的功能有绑定，开锁，解锁等。
